@@ -112,12 +112,9 @@ const BlogEditor = () => {
     const endpoint = isDraft ? url + "/save-draft" : url + "/publish";
   
      if(isDraft==="draft"){
-      navigate("/drafts");
+      navigate("/"+drafts)
      }
 
-     else{
-      navigate("/published");
-     }
 
 
 

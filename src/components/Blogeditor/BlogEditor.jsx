@@ -110,13 +110,12 @@ const BlogEditor = () => {
     };
 
     const endpoint = isDraft ? url + "/save-draft" : url + "/publish";
-  
-     if(isDraft==="draft"){
-      navigate("/"+drafts)
-     }
 
-
-
+    if (isDraft === "draft") {
+      navigate("/published");
+    } else {
+      navigate("/drafts");
+    }
 
     try {
       const res = await axios.post(endpoint, blogData);

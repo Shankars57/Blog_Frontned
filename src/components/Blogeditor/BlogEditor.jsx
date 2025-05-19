@@ -63,6 +63,14 @@ const BlogEditor = () => {
 
   const saveDraft = async () => {
     const plainTextContent = htmlToPlainText(data.content);
+    if (
+      !data.title.trim() ||
+      !plainTextContent.trim() ||
+      data.tags.length === 0
+    ) {
+      return; // Skip saving if fields are incomplete
+    }
+
     const blogData = {
       ...data,
       content: plainTextContent,
@@ -80,16 +88,25 @@ const BlogEditor = () => {
   };
 
   const triggerInactivitySave = () => {
+    const plainTextContent = htmlToPlainText(data.content);
+    if (
+      !data.title.trim() ||
+      !plainTextContent.trim() ||
+      data.tags.length === 0
+    ) {
+      return;
+    }
+
     if (hasAutoSaved) return;
+
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       saveDraft();
-      setHasAutoSaved(true); // mark as saved
+      setHasAutoSaved(true);
     }, 5000);
   };
 
   useEffect(() => {
-    // Auto-save every 30 seconds
     intervalRef.current = setInterval(() => {
       saveDraft();
     }, 30000);
@@ -111,12 +128,6 @@ const BlogEditor = () => {
 
     const endpoint = isDraft ? url + "/save-draft" : url + "/publish";
 
-    if (isDraft === "draft") {
-      navigate("/published");
-    } else {
-      navigate("/drafts");
-    }
-
     try {
       const res = await axios.post(endpoint, blogData);
       if (res.status === 200 || res.status === 201) {
@@ -125,6 +136,7 @@ const BlogEditor = () => {
         );
         setData({ title: "", content: "", tags: [], status: "draft" });
         setTagInput("");
+        navigate(isDraft ? "/drafts" : "/published");
       } else {
         toast.error("Failed to save the blog.");
       }
